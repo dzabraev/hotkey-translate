@@ -1,0 +1,11 @@
+{% for part in translate.def %}{{part.text}} {% if part.ts %}[{{part.ts}}]{% endif %} {{part.pos}}
+{%- for tr in part.tr %}
+{{loop.index}} {{tr.text}} {{tr.gen}}{% for syn in tr.syn %} {{syn.text}} {{syn.gen}}{% endfor %}
+  {% if tr.mean %}({% for mean in tr.mean %}{% if not loop.last %}{{mean.text}} {% else %}{{mean.text}}{% endif%}{% endfor %}){% endif -%}
+    {%- for ex in tr.ex %}
+    {%- for extr in ex.tr %}
+    {{ex.text}} – {{extr.text}}
+    {%- endfor -%}
+    {%- endfor -%}
+  {% endfor %}
+{% endfor %}
