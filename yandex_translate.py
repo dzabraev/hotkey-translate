@@ -23,22 +23,31 @@ class BaseTranslate(object):
       'params':[('key',self.KEY),('text',need_translate),('lang',self.LANG)],
     }
 
+
   def prepare_need_translate(self,need_translate):
     return functools.reduce(self.concat_wordbreak, map(lambda x:x.strip(), need_translate.split('\n')))
 
   def get_need_translate(self):
     return os.popen('xsel').read()
 
-
+  # Time of message showing based on human reading speed
+  def get_notify_send_time(self, translate):
+  	read_speed = 1800. / 60 # signs per second
+  	time = len(translate) / read_speed 
+  	time = int(time) * 1000 # conver to miilis
+  	
+  	if time < 1000:
+  		time = 1000
+  	return time
 
   def send_message(self, need_translate, translate=''):
     os.system(u'notify-send -t {time} -u critical "{need_translate}" "{translate}"'.format(
       need_translate=need_translate,
       translate=translate,
-      time=self.notify_send_time,
+      time=self.get_notify_send_time(translate),
     ))
 
-  def concat_wordbreak(self, x,y):
+  def concat_wordbreak(self, x, y):
     if len(x)==0:
         return y
     #different kind of unicoda dashes http://www.fileformat.info/info/unicode/category/Pd/list.htm
